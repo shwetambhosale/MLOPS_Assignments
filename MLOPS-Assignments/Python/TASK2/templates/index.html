@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Predictor</title>
+    <link rel="stylesheet" href="static/styles.css"> 
+</head>
+<body>
+
+    <div class="container">
+        <div class="text">House Price Prediction</div>
+
+        <form id="predictForm">
+            <div class="form-row">
+                <div class="input-data">
+                    <input type="number" id="area" required>
+                    <label for="area">Area (sq ft)</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <input type="number" id="bedrooms" required>
+                    <label for="bedrooms">Bedrooms</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-data">
+                    <input type="number" id="bathrooms" required>
+                    <label for="bathrooms">Bathrooms</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <input type="number" id="stories" required>
+                    <label for="stories">Stories</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-data">
+                    <select id="mainroad" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="mainroad">Main Road</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <select id="guestroom" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="guestroom">Guestroom</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-data">
+                    <select id="basement" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="basement">Basement</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <select id="hotwaterheating" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="hotwaterheating">Hot Water Heating</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-data">
+                    <select id="airconditioning" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="airconditioning">Air Conditioning</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <input type="number" id="parking" required>
+                    <label for="parking">Parking</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-data">
+                    <select id="prefarea" required>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <label for="prefarea">Preferred Area</label>
+                    <div class="underline"></div>
+                </div>
+                <div class="input-data">
+                    <select id="furnishingstatus" required>
+                        <option value="furnished">Furnished</option>
+                        <option value="semi-furnished">Semi-furnished</option>
+                        <option value="unfurnished">Unfurnished</option>
+                    </select>
+                    <label for="furnishingstatus">Furnishing Status</label>
+                    <div class="underline"></div>
+                </div>
+            </div>
+
+            <div class="submit-btn">
+                <div class="input-data">
+                    <div class="inner"></div>
+                    <input type="submit" value="Predict House">
+                </div>
+            </div>
+        </form>
+
+        <div class="output" id="result"></div>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();  // Prevent form from submitting the traditional way
+
+            const formData = {
+                area: parseFloat(document.getElementById('area').value),
+                bedrooms: parseInt(document.getElementById('bedrooms').value),
+                bathrooms: parseInt(document.getElementById('bathrooms').value),
+                stories: parseInt(document.getElementById('stories').value),
+                mainroad: document.getElementById('mainroad').value,
+                guestroom: document.getElementById('guestroom').value,
+                basement: document.getElementById('basement').value,
+                hotwaterheating: document.getElementById('hotwaterheating').value,
+                airconditioning: document.getElementById('airconditioning').value,
+                parking: parseInt(document.getElementById('parking').value),
+                prefarea: document.getElementById('prefarea').value,
+                furnishingstatus: document.getElementById('furnishingstatus').value,
+            };
+
+            // Make POST request to the FastAPI backend
+            const response = await fetch('/predict-price/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('result').innerText = `Predicted Price: $${data.predicted_price}`;
+            } else {
+                document.getElementById('result').innerText = 'Error in prediction. Please try again!';
+            }
+        });
+    </script>
+</body>
+</html>
